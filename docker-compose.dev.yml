@@ -20,6 +20,25 @@ services:
       - 8545:8545
     networks:
       - router
+  front-end-service:
+    container_name: front-end-service
+    restart: on-failure
+    volumes:
+      - ./front/src:/usr/src/app/front/src
+    environment:
+      SIGNER_PRIVATE_KEY: ${SIGNER_PRIVATE_KEY:?}
+      FUJI_CHAIN_ID: ${FUJI_CHAIN_ID:?}
+      FUJI_RPC_URL: ${FUJI_RPC_URL:?}
+      METAMASK_API_KEY: ${METAMASK_API_KEY:?}
+    build:
+        context: ./
+        dockerfile: ./front/Dockerfile.dev
+    expose:
+      - 5173
+    ports:
+      - 5173:5173
+    networks:
+      - router
 
 networks:
   router:

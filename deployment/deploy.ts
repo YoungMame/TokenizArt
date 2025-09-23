@@ -15,10 +15,9 @@ async function main() {
     // /   console.log("Account balance:", (await deployer.getBalance()).toString());
     // console.log("Account balance:", (await deployer.getBalance()).toString());
 
-    const Token = await ethers.getContractFactory("MameCoin42");
+    const Token = await ethers.getContractFactory("Sheldon42");
     console.log("Token contract factory:", Token);
-    const supply = ethers.parseUnits("5000000", 8); // 5 million tokens with 8 decimals
-    const token = await Token.deploy(supply, [], [], []);
+    const token = await Token.deploy();
     console.log("token object:", token);
     // No need to call token.deployed(), deploy() already waits for deployment
 
@@ -29,24 +28,24 @@ async function main() {
 }
 
 function saveFrontendFiles(token) {
-    // const fs = require("fs");
-    // const contractsDir = path.join(__dirname, "..", "frontend", "src", "contracts");
+    const fs = require("fs");
+    const contractsDir = path.join(__dirname, "..", "frontend", "src", "contracts");
 
-    // if (!fs.existsSync(contractsDir)) {
-    //     fs.mkdirSync(contractsDir);
-    // }
+    if (!fs.existsSync(contractsDir)) {
+        fs.mkdirSync(contractsDir);
+    }
 
-    // fs.writeFileSync(
-    //     path.join(contractsDir, "contract-address.json"),
-    //     JSON.stringify({ Token: token.address }, undefined, 2)
-    // );
+    fs.writeFileSync(
+        path.join(contractsDir, "contract-address.json"),
+        JSON.stringify({ Token: token.address }, undefined, 2)
+    );
 
-    // const TokenArtifact = artifacts.readArtifactSync("MameCoin");
+    const TokenArtifact = artifacts.readArtifactSync("Sheldon42");
 
-    // fs.writeFileSync(
-    //     path.join(contractsDir, "Token.json"),
-    //     JSON.stringify(TokenArtifact, null, 2)
-    // );
+    fs.writeFileSync(
+        path.join(contractsDir, "Token.json"),
+        JSON.stringify(TokenArtifact, null, 2)
+    );
 }
 
 main()

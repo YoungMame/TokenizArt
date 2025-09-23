@@ -1,0 +1,14 @@
+FROM node:24-alpine
+
+WORKDIR /usr/src/app
+
+RUN apk update --no-cache && \ 
+    apk add pnpm
+
+COPY ./front /usr/src/app/front
+
+RUN pnpm i
+
+RUN chmod +x dev.sh
+
+ENTRYPOINT [ "cd /usr/src/app/front && pnpm run prod" ]
