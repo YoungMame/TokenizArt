@@ -5,23 +5,23 @@ import './css/App.css'
 import Navbar from './components/Navbar/Navbar'
 import Card from './components/Card/Card'
 
-import { Web3, MetaMaskProvider } from 'web3';
+import { Web3, MetaMaskProvider, Contract } from 'web3';
 import tokenJson from '../contracts/Token.json';
 import contractAddress from '../contracts/contract-address.json';
 
-import { useWeb3 } from './context/Web3Contex';
+import { Web3Context } from './context/Web3Contex';
 
 const abi = tokenJson.abi;
 const address = contractAddress.address;
 
+
 const nftCollection = [
   {
-    id: 1,
-    name: 'NFT 1',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvo7yyAUYBGZ0h6K5Ib2zckPhO0B1oFpNkcw&s',
-  },
+    name: "Sheldon42 #1",
+    description: "The first Sheldon42 NFT",
+    image: "/sheldon.jpg",
+  }
 ]
-
 
 declare global {
 	interface Window {
@@ -29,14 +29,30 @@ declare global {
 	}
 }
 
-
 function App() {
-  const web3Context = useWeb3();
   const [web3, setWeb3] = useState<Web3 | null>(null);
   const [accounts, setAccounts] = useState<string[]>([]);
   const [connectedAccount, setConnectedAccount] = useState<string | null>(null);
-	const [warning, setWarning] = useState<string | null>(null);
-	const [provider, setProvider] = useState<string | null>(null);
+  const [contract, setContract] = useState<Contract | null>(null)
+
+  const fetchMetamaskAccounts = async () => {
+    if (web3 === null) {
+      console.log("dont fetch metamask account because of web3 nul")
+      return;
+    }
+    const allAccounts = await web3.eth.getAccounts();
+    if (allAccounts[0])
+    {
+      setAccounts(allAccounts);
+      setConnectedAccount(allAccounts[0]);	
+    }
+	}
+
+  const setNewContract = async () => {
+    console.log("setNewContract called", abi, address)
+    const tempContract = await new web3.eth.Contract(abi, address);
+    setContract(tempContract);
+  }
 
 	useEffect(() => {
 		// ensure that there is an injected the Ethereum provider
@@ -45,47 +61,45 @@ function App() {
 			setWeb3(new Web3(window.ethereum));
 			// check if Ethereum provider comes from MetaMask
 			if (window.ethereum.isMetaMask) {
-				setProvider('Connected to Ethereum with MetaMask.');
+				// setProvider('Connected to Ethereum with MetaMask.');
 			} else {
-				setProvider('Non-MetaMask Ethereum provider detected.');
+				// setProvider('Non-MetaMask Ethereum provider detected.');
 			}
 		} else {
-			// no Ethereum provider - instruct user to install MetaMask
-			setWarning('Please install MetaMask');
+			// setWarning('Please install MetaMask');
 		}
 	}, []);
 
   useEffect(() => {
-    console.log('abi = ', abi);
-    console.log('address = ', address);
-  }, [])
+    if (web3) 
+      fetchMetamaskAccounts();
+  }, [web3])
 
-
-  const mintNFT = (id: number) => {
-    alert(`Minting NFT with ID: ${id}`);
-  }
+  useEffect(() => {
+    if (connectedAccount && web3)
+      setNewContract();
+  }, [connectedAccount, web3])
 
   return (
     <>
-      <web3Context.Provider value={{
+      <Web3Context.Provider value={{
         web3: web3,
         setWeb3: setWeb3,
         accounts: accounts,
         setAccounts: setAccounts,
         connectedAccount: connectedAccount,
         setConnectedAccount: setConnectedAccount,
+        contract: contract,
+        setContract: setContract
       }}>
-        {warning ? <p>{warning}</p> : null}
-        {provider ? <p>{provider}</p> : null}
-        {connectedAccount && <span>{connectedAccount}</span>}
 
         <Navbar />
         <div className="nft-collection">
-          {nftCollection.map((nft) => (
-            <Card onClick={() => mintNFT(nft.id)} key={nft.id} title={nft.name} imgSrc={nft.image} />
+          {nftCollection.map((nft, key) => (
+            <Card key={key} description={nft.description} name={nft.name} image={nft.image} />
           ))}
         </div>
-      </web3Context.Provider>
+      </Web3Context.Provider>
     </>
   )
 }

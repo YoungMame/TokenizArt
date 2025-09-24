@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { Web3 } from 'web3';
+import { Web3, Contract } from 'web3';
 
 type Web3ContextType = {
   web3: Web3 | null;
@@ -8,6 +8,8 @@ type Web3ContextType = {
   setAccounts: React.Dispatch<React.SetStateAction<string[]>>;
   connectedAccount: string | null;
   setConnectedAccount: React.Dispatch<React.SetStateAction<string | null>>;
+  contract: Contract | null;
+  setContract: React.Dispatch<React.SetStateAction<Contract | null>>;
 };
 
 export const Web3Context = createContext<Web3ContextType>({
@@ -17,6 +19,8 @@ export const Web3Context = createContext<Web3ContextType>({
   setAccounts: () => {},
   connectedAccount: null,
   setConnectedAccount: () => {},
+  contract: null,
+  setContract: () => {}
 });
 
 export const useWeb3 = () => useContext(Web3Context);

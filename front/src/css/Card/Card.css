@@ -1,0 +1,17 @@
+.card {
+    width: fit-content;
+    border-radius: 2%;
+    border: 1px solid aliceblue
+}
+
+.card-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100px;
+    margin: 5px;
+}
+
+.card > img {
+    width: 100px;
+}

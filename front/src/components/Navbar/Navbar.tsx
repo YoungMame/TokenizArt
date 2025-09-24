@@ -1,11 +1,19 @@
-import '../../css/App.css'
 import Login from './Login/Login'
+import "../../css/Navbar/Navbar.css"
+import { useWeb3 } from "../../context/Web3Contex";
 
 function Navbar() {
+  const { web3, setAccounts, setConnectedAccount, provider } = useWeb3();
+  
   return (
     <>
-      <h1>My NFT collection</h1>
-      <Login />
+      <div className={"navbar"}>
+        <h1>My NFT collection</h1>
+        <div className={"navbar-buttons"}>
+          {web3 ? <Login /> : <p>Please install Metamask etherum on your browser</p>}
+          {provider}
+        </div>
+      </div>
     </>
   )
 }
