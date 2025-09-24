@@ -1,48 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import "../../css/Card/Card.css"
 import { useWeb3 } from "../../context/Web3Contex";
-import fs from "fs"
-import path from "path"
-
-
-
 
 type CardProps = {
   name: string;
   description: string;
   image: string;
+  author: string;
 };
 
-function Card({ name, image, description }: React.FC<CardProps>)  {
-  const [gasPrice, setGasPrice] = useState<number | string>("Calculating...")
+function Card({ name, image, description, author }: React.FC<CardProps>)  {
+  const [gasPrice, setGasPrice] = useState<number | string>("Calculating...");
+  const [currentBalance, setCurrentBalance] = useState<string>("0");
+  const [base64Img, setBase64Img] = useState<string>("");
   const { web3, setAccounts, setConnectedAccount, provider, connectedAccount, contract } = useWeb3();
   
   const mintNFT = () => {
 
-    alert(`Minting NFT with ID: ${nftId}`);
+    alert(`Minting NFT with ID: ${name}`);
   }
 
   const getTokenURI = () => {
     const tokenURI = {
       name: name,
       description: description,
+      author: author,
+      image: base64Img
     }
-    // const mintPath = path.join(__dirname, '../mint/');
-    // const imageName = 'image.jpg';
-    // const fullImagePath = path.join(mintPath, imageName);
-
-    // const imageData = fs.readFileSync(fullImagePath);
-    // const base64Image = imageData.toString('base64');
-    // const base64Prefix = 'data:image/png;base64,';
-    // const tokenImageURI = base64Prefix + base64Image;
-    // console.log(`Token URI: ${tokenImageURI.substring(0, 30)}...`);
-    // const encodedTokenURI = Buffer.from(JSON.stringify(tokenURI)).toString('base64');
+    const encoded = btoa(JSON.stringify(tokenURI));
+    return encoded;
   }
 
   const fetchMintFees = async () => {
       const resTokenURI = getTokenURI();
+      console.log("resTokenURI", resTokenURI);
       const resGas = await contract.methods.mintNFT(connectedAccount, resTokenURI).estimateGas({ from: connectedAccount });
-      setGasPrice(resGas);
+      const gasPrice = await web3.eth.getGasPrice();
+      const txPriceInWei = resGas * gasPrice;
+      const txPriceInEth = web3.utils.fromWei(txPriceInWei.toString(), 'ether');
+      setGasPrice(txPriceInEth);
   }
 
   useEffect(() => {
@@ -50,14 +46,35 @@ function Card({ name, image, description }: React.FC<CardProps>)  {
       fetchMintFees();
   }, [contract])
 
+  const fetchBalance = async () => {
+    if (web3 && connectedAccount) {
+      const balanceWei = await web3.eth.getBalance(connectedAccount);
+      const balanceEth = web3.utils.fromWei(balanceWei, 'ether');
+      setCurrentBalance(web3.utils.fromWei(balanceEth.toString(), 'ether'));
+    }
+  }
+
+  useEffect(() => {
+    fetchBalance();
+  }, [web3, connectedAccount]);
+
+  useEffect(() => {
+    fetch(image)
+      .then(response => response.text())
+      .then(base64 => {
+        setBase64Img(`data:image/jpg;base64,${base64}`);
+      });
+  }, []);
+
   return (
     <>
       <div className="card" onClick={mintNFT}>
         {/* image src is something like /image.png */}
-        <img src={imgSrc} />
-        <h2>{title}</h2>
-        <h3>{nftId}</h3>
-        <button>{"Mint it for: " + gasPrice}</button>
+        <img src={(base64Img == "" ) ? null : base64Img} />
+        <h2>{name}</h2>
+        <h3>{description}</h3>
+        <button>{"Mint it for: " + gasPrice + "ETH"}</button>
+        <strong>{`Your current balance is: ${currentBalance} ETH`}</strong>
       </div>
     </>
   )

@@ -19,7 +19,8 @@ const nftCollection = [
   {
     name: "Sheldon42 #1",
     description: "The first Sheldon42 NFT",
-    image: "/sheldon.jpg",
+    image: "/image",
+    author: "mduvey"
   }
 ]
 
