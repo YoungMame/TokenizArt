@@ -11,7 +11,6 @@ type CardProps = {
 
 function Card({ name, image, description, author }: React.FC<CardProps>)  {
   const [gasPrice, setGasPrice] = useState<number | string>("Calculating...");
-  const [currentBalance, setCurrentBalance] = useState<string>("0");
   const [base64Img, setBase64Img] = useState<string>("");
   const { web3, setAccounts, setConnectedAccount, provider, connectedAccount, contract } = useWeb3();
   
@@ -36,27 +35,16 @@ function Card({ name, image, description, author }: React.FC<CardProps>)  {
       console.log("resTokenURI", resTokenURI);
       const resGas = await contract.methods.mintNFT(connectedAccount, resTokenURI).estimateGas({ from: connectedAccount });
       const gasPrice = await web3.eth.getGasPrice();
-      const txPriceInWei = resGas * gasPrice;
+      const txPriceInWei = (resGas * gasPrice);
       const txPriceInEth = web3.utils.fromWei(txPriceInWei.toString(), 'ether');
-      setGasPrice(txPriceInEth);
+      const txPriceFixed = Number(txPriceInEth).toPrecision(5);
+      setGasPrice(txPriceFixed);
   }
 
   useEffect(() => {
     if (contract)
       fetchMintFees();
   }, [contract])
-
-  const fetchBalance = async () => {
-    if (web3 && connectedAccount) {
-      const balanceWei = await web3.eth.getBalance(connectedAccount);
-      const balanceEth = web3.utils.fromWei(balanceWei, 'ether');
-      setCurrentBalance(web3.utils.fromWei(balanceEth.toString(), 'ether'));
-    }
-  }
-
-  useEffect(() => {
-    fetchBalance();
-  }, [web3, connectedAccount]);
 
   useEffect(() => {
     fetch(image)
@@ -73,8 +61,7 @@ function Card({ name, image, description, author }: React.FC<CardProps>)  {
         <img src={(base64Img == "" ) ? null : base64Img} />
         <h2>{name}</h2>
         <h3>{description}</h3>
-        <button>{"Mint it for: " + gasPrice + "ETH"}</button>
-        <strong>{`Your current balance is: ${currentBalance} ETH`}</strong>
+        <button>{"Mint it for: " + gasPrice + "AVAX"}</button>
       </div>
     </>
   )

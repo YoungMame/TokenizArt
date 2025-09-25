@@ -34,18 +34,47 @@ function App() {
   const [web3, setWeb3] = useState<Web3 | null>(null);
   const [accounts, setAccounts] = useState<string[]>([]);
   const [connectedAccount, setConnectedAccount] = useState<string | null>(null);
-  const [contract, setContract] = useState<Contract | null>(null)
+  const [contract, setContract] = useState<Contract | null>(null);
+  const [currentChainId, setCurrentChainId] = useState<number | null>(null);
+  const [currentBalance, setCurrentBalance] = useState<number | null>(null);
+
+  const chainId = (import.meta.env.VITE_ENV == "dev") ? 1337 : 43113; // avalanche testnet chain id or hardhat if env is "dev"
+  const chainName = (import.meta.env.VITE_ENV == "dev") ? "Hardhat" : "Avalanche Fuji Testnet"
+  const rpcURL = (import.meta.env.VITE_ENV == "dev") ? "http://127.0.0.1:8545/" : " https://api.avax-test.network/ext/bc/c/rpc"
+  const nativeCurrency = (import.meta.env.VITE_ENV == "dev") ? { name: "Ethereum", decimals: 18, symbol: "ETH" } : { name: "AVAX", decimals: 18, symbol: "AVAX" }
 
   const fetchMetamaskAccounts = async () => {
     if (web3 === null) {
-      console.log("dont fetch metamask account because of web3 nul")
       return;
     }
     const allAccounts = await web3.eth.getAccounts();
-    if (allAccounts[0])
-    {
-      setAccounts(allAccounts);
-      setConnectedAccount(allAccounts[0]);	
+    console.log("Before allAccounts")
+    if (!allAccounts[0])
+      return ;
+    setAccounts(allAccounts);
+    setConnectedAccount(allAccounts[0])
+    if (window.ethereum.networkVersion !== chainId) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: web3.utils.toHex(chainId) }]
+        });
+      } catch (err: any) {
+          // This error code indicates that the chain has not been added to MetaMask
+        if (err.code === 4902) {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainName: chainName,
+                chainId: web3.utils.toHex(chainId),
+                nativeCurrency: nativeCurrency,
+                rpcUrls: [rpcURL]
+              }
+            ]
+          });
+        }
+      }
     }
 	}
 
@@ -53,6 +82,16 @@ function App() {
     console.log("setNewContract called", abi, address)
     const tempContract = await new web3.eth.Contract(abi, address);
     setContract(tempContract);
+  }
+
+  const fetchBalanceAndChainID = async () => {
+    const resChainId = await web3.eth.getChainId();
+    setCurrentChainId(resChainId);
+    console.log(connectedAccount)
+    const balanceWei = await web3.eth.getBalance(connectedAccount);
+    const balanceEth = web3.utils.fromWei(balanceWei, 'ether');
+    const balanceFixed = Number(balanceEth).toFixed(5);
+    setCurrentBalance(balanceFixed.toString());
   }
 
 	useEffect(() => {
@@ -78,7 +117,10 @@ function App() {
 
   useEffect(() => {
     if (connectedAccount && web3)
+    {
       setNewContract();
+      fetchBalanceAndChainID();
+    }
   }, [connectedAccount, web3])
 
   return (
@@ -95,6 +137,8 @@ function App() {
       }}>
 
         <Navbar />
+        <p>Your current balance is <strong>{(currentBalance) ? currentBalance : "..."}</strong>AVAX</p>
+        <p>Your current Network is <strong>{(currentChainId) ? currentChainId : "..."}</strong></p>
         <div className="nft-collection">
           {nftCollection.map((nft, key) => (
             <Card key={key} description={nft.description} name={nft.name} image={nft.image} />

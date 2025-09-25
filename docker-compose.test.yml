@@ -11,6 +11,7 @@ services:
       SIGNER_PRIVATE_KEY: ${SIGNER_PRIVATE_KEY:?}
       FUJI_CHAIN_ID: ${FUJI_CHAIN_ID:?}
       FUJI_RPC_URL: ${FUJI_RPC_URL:?}
+      ENV: "test"
     build:
         context: ./
         dockerfile: ./deployment/Dockerfile.test
