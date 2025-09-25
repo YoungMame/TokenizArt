@@ -2,66 +2,66 @@ import React, { useEffect, useState } from 'react';
 import "../../css/Card/Card.css"
 import { useWeb3 } from "../../context/Web3Contex";
 
-type CardProps = {
-  name: string;
-  description: string;
-  image: string;
-  author: string;
-};
-
-function Card({ name, image, description, author }: React.FC<CardProps>)  {
-  const [gasPrice, setGasPrice] = useState<number | string>("Calculating...");
+function Card()  {
+  const [price, setPrice] = useState<number | string>("Loading...");
+  const [name, setName] = useState<string>("Loading...");
+  const [description, setDescription] = useState<string>("Loading...");
+  const [isSold, setIsSold] = useState<boolean>(false);
+  const [artist, setArtist] = useState<string>("Loading...");
   const [base64Img, setBase64Img] = useState<string>("");
-  const { web3, setAccounts, setConnectedAccount, provider, connectedAccount, contract } = useWeb3();
-  
-  const mintNFT = () => {
+  const { web3, connectedAccount, contract } = useWeb3();
 
-    alert(`Minting NFT with ID: ${name}`);
+  // buy and mint the NFT, send transaction to contract
+  const mintNFT = async () => {
+    const txRes = await contract.methods.mintNFT().send({ from: connectedAccount });
+    console.log(txRes);
   }
 
-  const getTokenURI = () => {
-    const tokenURI = {
-      name: name,
-      description: description,
-      author: author,
-      image: base64Img
+  const fetchNFTIsSold = async () => {
+      const resIsSold = await contract.methods.isSold().call();
+      console.log("isSold:", resIsSold);
+      setIsSold(resIsSold);
+  }
+
+  const fetchNFTMetadata = async () => {
+      const resMetadata64 = await contract.methods.tokenMetadata().call();
+      console.log("Metadata (base64):", resMetadata64);
+      const resMetadataJson = new Buffer(resMetadata64, 'base64').toString('ascii').replace('data:application/json;base64,', '');
+      // const resMetadataJson = atob(resMetadata64.replace('data:application/json;base64,', ''));
+      const resMetadataObject = JSON.parse(resMetadataJson);
+      console.log("Metadata object:", resMetadataObject);
+      setName(resMetadataObject.name);
+      setDescription(resMetadataObject.description);
+      setArtist(resMetadataObject.artist);
+      setBase64Img(resMetadataObject.image);
+  }
+
+  const fetchNFTPrice = async () => {
+      const resPrice = await contract.methods.price().call();
+      console.log("Price (in wei):", resPrice);
+      const priceInAvax = web3.utils.fromWei(resPrice, 'ether');
+      console.log("Price (in AVAX):", priceInAvax);
+      setPrice(priceInAvax);
+  }
+
+  useEffect(() => {
+    if (contract) {
+      fetchNFTPrice();
+      fetchNFTMetadata();
+      fetchNFTIsSold();
     }
-    const encoded = btoa(JSON.stringify(tokenURI));
-    return encoded;
-  }
-
-  const fetchMintFees = async () => {
-      const resTokenURI = getTokenURI();
-      console.log("resTokenURI", resTokenURI);
-      const resGas = await contract.methods.mintNFT(connectedAccount, resTokenURI).estimateGas({ from: connectedAccount });
-      const gasPrice = await web3.eth.getGasPrice();
-      const txPriceInWei = (resGas * gasPrice);
-      const txPriceInEth = web3.utils.fromWei(txPriceInWei.toString(), 'ether');
-      const txPriceFixed = Number(txPriceInEth).toPrecision(5);
-      setGasPrice(txPriceFixed);
-  }
-
-  useEffect(() => {
-    if (contract)
-      fetchMintFees();
   }, [contract])
-
-  useEffect(() => {
-    fetch(image)
-      .then(response => response.text())
-      .then(base64 => {
-        setBase64Img(`data:image/jpg;base64,${base64}`);
-      });
-  }, []);
 
   return (
     <>
-      <div className="card" onClick={mintNFT}>
+      <div className="card">
         {/* image src is something like /image.png */}
-        <img src={(base64Img == "" ) ? null : base64Img} />
-        <h2>{name}</h2>
-        <h3>{description}</h3>
-        <button>{"Mint it for: " + gasPrice + "AVAX"}</button>
+        <div className="card-content">
+          <img src={(base64Img == "" ) ? null : base64Img} />
+          <h2>{name}</h2>
+          <h3>{description}</h3>
+        </div>
+        <button onClick={mintNFT}>{`Buy it for: ${price} AVAX`}</button>
       </div>
     </>
   )

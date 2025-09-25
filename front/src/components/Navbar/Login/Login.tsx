@@ -20,10 +20,11 @@ function Login() {
 			// get the first account and populate placeholder
 			setConnectedAccount(allAccounts[0]);
 		}
+
 	return (
 		<>
-			<button onClick={requestAccounts} className="button-disabled">
-				{connectedAccount ? `${connectedAccount} - Disconnect` : "Login with Metamask"}
+			<button onClick={requestAccounts} >
+				{connectedAccount ? `Connected with ${connectedAccount}` : "Login with Metamask"}
 			</button>
 
 		</>

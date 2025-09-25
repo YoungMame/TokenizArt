@@ -5,6 +5,21 @@
 const path = require("path");
 
 async function main() {
+    const fs = require("fs");
+    const mintFolder = path.join(__dirname, "./mint"); // Go up one level to find mint folder
+
+    // read price from price.json
+    const pricePath = path.join(mintFolder, "price.json");
+    const priceData = fs.readFileSync(pricePath);
+    const priceJson = JSON.parse(priceData);
+    console.log("Price (in wei):", priceJson.price);
+
+    // read the metdata from metadata.json
+    const metadataPath = path.join(mintFolder, "metadata.json");
+    const metadataData = fs.readFileSync(metadataPath, "utf8"); // Add utf8 encoding
+    const metadataJson = JSON.stringify(JSON.parse(metadataData)); // Convert to proper JSON string
+    console.log("Metadata:", metadataJson);
+
     // ethers is available in the global scope
     const [deployer] = await ethers.getSigners();
     console.log(
@@ -15,9 +30,9 @@ async function main() {
     // /   console.log("Account balance:", (await deployer.getBalance()).toString());
     // console.log("Account balance:", (await deployer.getBalance()).toString());
 
-    const Token = await ethers.getContractFactory("Sheldon42");
+    const Token = await ethers.getContractFactory("Mame42");
     console.log("Token contract factory:", Token);
-    const token = await Token.deploy();
+    const token = await Token.deploy(metadataJson, BigInt(priceJson.price)); // Use metadataJson instead of metadataData
     console.log("token object:", token);
     // No need to call token.deployed(), deploy() already waits for deployment
 
@@ -40,7 +55,7 @@ function saveFrontendFiles(token) {
         JSON.stringify({ address: token.target }, undefined, 2)
     );
 
-    const TokenArtifact = artifacts.readArtifactSync("Sheldon42");
+    const TokenArtifact = artifacts.readArtifactSync("Mame42");
 
     fs.writeFileSync(
         path.join(contractsDir, "Token.json"),

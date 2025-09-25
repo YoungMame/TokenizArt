@@ -1,17 +1,33 @@
 .card {
     width: fit-content;
     border-radius: 2%;
-    border: 1px solid aliceblue
+    border: 1px solid aliceblue;
+    background-color: grey;
+    height: 300px;
+    padding: 25px;
+    width: 300px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
 }
 
 .card-content {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
     width: 100px;
+    max-height: 100%;
     margin: 5px;
 }
 
-.card > img {
+.card-content > * {
+    margin: 0px;
+}
+
+.card-content > img {
     width: 100px;
+    height: 100px;
 }
