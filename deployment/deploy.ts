@@ -14,10 +14,17 @@ async function main() {
     const priceJson = JSON.parse(priceData);
     console.log("Price (in wei):", priceJson.price);
 
+    // read the image from image
+    const imagePath = path.join(mintFolder, "image");
+    const imageString = fs.readFileSync(imagePath, "utf8"); // Add utf8 encoding
+    console.log("Image (base64):", imageString);
+
     // read the metdata from metadata.json
     const metadataPath = path.join(mintFolder, "metadata.json");
     const metadataData = fs.readFileSync(metadataPath, "utf8"); // Add utf8 encoding
-    const metadataJson = JSON.stringify(JSON.parse(metadataData)); // Convert to proper JSON string
+    const metadataObject = JSON.parse(metadataData);
+    metadataObject.image = imageString;
+    const metadataJson = JSON.stringify(metadataObject); // Convert to proper JSON string
     console.log("Metadata:", metadataJson);
 
     // ethers is available in the global scope

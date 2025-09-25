@@ -44,16 +44,7 @@ function App() {
   const rpcURL = (import.meta.env.VITE_ENV == "dev") ? "http://127.0.0.1:8545/" : " https://api.avax-test.network/ext/bc/c/rpc"
   const nativeCurrency = (import.meta.env.VITE_ENV == "dev") ? { name: "Ethereum", decimals: 18, symbol: "ETH" } : { name: "AVAX", decimals: 18, symbol: "AVAX" }
 
-  const fetchMetamaskAccounts = async () => {
-    if (web3 === null) {
-      return;
-    }
-    const allAccounts = await web3.eth.getAccounts();
-    console.log("Before allAccounts")
-    if (!allAccounts[0])
-      return ;
-    setAccounts(allAccounts);
-    setConnectedAccount(allAccounts[0])
+  const setProperNetwork = async () => {
     if (window.ethereum.networkVersion !== chainId) {
       try {
         await window.ethereum.request({
@@ -77,6 +68,27 @@ function App() {
         }
       }
     }
+  }
+
+  window.ethereum.on('accountsChanged', function (accounts) {
+    console.log("accountsChanged", accounts);
+    // Ici, tu peux réinitialiser web3 avec le nouveau compte si besoin
+    setConnectedAccount(accounts[0]);
+    setProperNetwork();
+    // Faire d'autres actions...
+  });
+
+  const fetchMetamaskAccounts = async () => {
+    if (web3 === null) {
+      return;
+    }
+    const allAccounts = await web3.eth.getAccounts();
+    console.log("Before allAccounts")
+    if (!allAccounts[0])
+      return ;
+    setAccounts(allAccounts);
+    setConnectedAccount(allAccounts[0]);
+    setProperNetwork();
 	}
 
   const setNewContract = async () => {

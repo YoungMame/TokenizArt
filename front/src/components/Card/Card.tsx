@@ -26,14 +26,15 @@ function Card()  {
   const fetchNFTMetadata = async () => {
       const resMetadata64 = await contract.methods.tokenMetadata().call();
       console.log("Metadata (base64):", resMetadata64);
-      const resMetadataJson = new Buffer(resMetadata64, 'base64').toString('ascii').replace('data:application/json;base64,', '');
-      // const resMetadataJson = atob(resMetadata64.replace('data:application/json;base64,', ''));
+      // const resMetadataJson = new Buffer(resMetadata64, 'base64').toString('ascii').replace('data:application/json;base64,', '');
+      const resMetadataJson = atob(resMetadata64.replace('data:application/json;base64,', ''));
       const resMetadataObject = JSON.parse(resMetadataJson);
       console.log("Metadata object:", resMetadataObject);
       setName(resMetadataObject.name);
       setDescription(resMetadataObject.description);
       setArtist(resMetadataObject.artist);
       setBase64Img(resMetadataObject.image);
+      console.log("base64Img:", resMetadataObject.image);
   }
 
   const fetchNFTPrice = async () => {

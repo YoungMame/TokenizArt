@@ -41,14 +41,13 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      gasPrice: 1000000000, // 1 Gwei = 1_000_000_000 wei = 0.001 ETH is an avergae gas price for testing
+      allowUnlimitedContractSize: true,
+      // gasPrice: 1000000000, // 1 Gwei = 1_000_000_000 wei = 0.001 ETH is an avergae gas price for testing
       chainId: 1337,
       forking: forkingData,
       accounts: { count: 10, accountsBalance: "9999999999999999999999" }
-      // accounts: ((process.env.ENV == "test") ? { count: 10, accountsBalance: "9999999999999999999999" } : hardhatAccounts) // 10_000 ETH for each account
     },
     fuji: {
-      gasPrice: 1000000000, // 1 Gwei = 1_000_000_000 wei = 0.001 ETH is an avergae gas price for testing
       url: process.env.FUJI_URL || "https://api.avax-test.network/ext/bc/C/rpc",
       chainId: Number(process.env.FUJI_CHAIN_ID) || 43113,
       accounts: [process.env.SIGNER_PRIVATE_KEY || ""]
