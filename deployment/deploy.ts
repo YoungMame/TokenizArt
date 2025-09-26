@@ -12,20 +12,18 @@ async function main() {
     const pricePath = path.join(mintFolder, "price.json");
     const priceData = fs.readFileSync(pricePath);
     const priceJson = JSON.parse(priceData);
-    console.log("Price (in wei):", priceJson.price);
 
     // read the image from image
     const imagePath = path.join(mintFolder, "image");
     const imageString = fs.readFileSync(imagePath, "utf8"); // Add utf8 encoding
-    console.log("Image (base64):", imageString.slice(0, 30));
+    const prefixedImageString = imageString + 'data:image/png;base64,';
 
     // read the metdata from metadata.json
     const metadataPath = path.join(mintFolder, "metadata.json");
     const metadataData = fs.readFileSync(metadataPath, "utf8"); // Add utf8 encoding
     const metadataObject = JSON.parse(metadataData);
-    metadataObject.image = imageString;
+    metadataObject.image = prefixedImageString;
     const metadataJson = JSON.stringify(metadataObject); // Convert to proper JSON string
-    console.log("Metadata:", metadataJson);
 
     // ethers is available in the global scope
     const [deployer] = await ethers.getSigners();
@@ -38,9 +36,7 @@ async function main() {
     // console.log("Account balance:", (await deployer.getBalance()).toString());
 
     const Token = await ethers.getContractFactory("Mame42");
-    console.log("Token contract factory:", Token);
     const token = await Token.deploy(metadataJson, BigInt(priceJson.price)); // Use metadataJson instead of metadataData
-    console.log("token object:", token);
     // No need to call token.deployed(), deploy() already waits for deployment
 
     console.log("Token address:", token.target);

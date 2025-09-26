@@ -7,7 +7,7 @@ import deployFixture from "./fixtures/deployFixture";
 import filledAccountsFxiture from "./fixtures/filledAccountsFixture";
 
 export const NAME = "Mame42";
-export const SYMBOL = "SHL";
+export const SYMBOL = "MAM";
 
 const fs = require('fs');
 const path = require('path');

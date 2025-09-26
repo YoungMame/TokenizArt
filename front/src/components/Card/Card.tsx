@@ -14,8 +14,13 @@ function Card()  {
 
   // buy and mint the NFT, send transaction to contract
   const mintNFT = async () => {
-    const txRes = await contract.methods.mintNFT().send({ from: connectedAccount, value: web3.utils.toWei(price.toString(), 'ether') });
-    console.log(txRes);
+    try {
+      const txRes = await contract.methods.mintNFT().send({ from: connectedAccount, value: web3.utils.toWei(price.toString(), 'ether') });
+      alert(`Your nft id is ${txRes as number}`);
+    } catch (error) {
+      alert(`There was an error buying nft: ${(error as Error).message || error}`);
+    }
+
   }
 
   const fetchNFTIsSold = async () => {
@@ -83,7 +88,7 @@ function Card()  {
           <p>artist: <strong>{artist}</strong></p>
         </div>
         <div>{`}`}</div>
-        <button onClick={mintNFT} disabled={isSold || price === "Loading..."}>{isSold ? "Sold " : `Buy it for: ${price} AVAX`}</button>
+        <button onClick={mintNFT} disabled={isSold || price === "Loading..."}>{isSold ? `Owned by ${owner}` : `Buy it for: ${price} AVAX`}</button>
       </div>
     </>
   )
