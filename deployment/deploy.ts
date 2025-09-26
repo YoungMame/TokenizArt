@@ -17,7 +17,7 @@ async function main() {
     // read the image from image
     const imagePath = path.join(mintFolder, "image");
     const imageString = fs.readFileSync(imagePath, "utf8"); // Add utf8 encoding
-    console.log("Image (base64):", imageString);
+    console.log("Image (base64):", imageString.slice(0, 30));
 
     // read the metdata from metadata.json
     const metadataPath = path.join(mintFolder, "metadata.json");

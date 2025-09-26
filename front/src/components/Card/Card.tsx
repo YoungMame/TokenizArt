@@ -9,11 +9,12 @@ function Card()  {
   const [isSold, setIsSold] = useState<boolean>(false);
   const [artist, setArtist] = useState<string>("Loading...");
   const [base64Img, setBase64Img] = useState<string>("");
+  const [owner, setOwner] = useState<string | null>(null);
   const { web3, connectedAccount, contract } = useWeb3();
 
   // buy and mint the NFT, send transaction to contract
   const mintNFT = async () => {
-    const txRes = await contract.methods.mintNFT().send({ from: connectedAccount });
+    const txRes = await contract.methods.mintNFT().send({ from: connectedAccount, value: web3.utils.toWei(price.toString(), 'ether') });
     console.log(txRes);
   }
 
@@ -45,6 +46,11 @@ function Card()  {
       setPrice(priceInAvax);
   }
 
+  const fetchNFTOwner = async () => {
+      const resOwner = await contract.methods.ownerOf(1).call();
+      setOwner(resOwner);
+  }
+
   useEffect(() => {
     if (contract) {
       fetchNFTPrice();
@@ -53,16 +59,31 @@ function Card()  {
     }
   }, [contract])
 
+  useEffect(() => {
+    if (contract && !isSold) {
+      const interval = setInterval(() => {
+        fetchNFTIsSold();
+      }, 2000);
+      return () => clearInterval(interval);
+    } else if (isSold) {
+      fetchNFTOwner();
+    }
+  }, [contract, isSold])
+
   return (
     <>
       <div className="card">
-        {/* image src is something like /image.png */}
+        <h5>{contract ? contract._address : ""}</h5>
+        <div>{`metadata {`}</div>
         <div className="card-content">
+          <p>image: </p>
           <img src={(base64Img == "" ) ? null : base64Img} />
-          <h2>{name}</h2>
-          <h3>{description}</h3>
+          <p>name: <strong>{name}</strong></p>
+          <p>description: <strong>{description}</strong></p>
+          <p>artist: <strong>{artist}</strong></p>
         </div>
-        <button onClick={mintNFT}>{`Buy it for: ${price} AVAX`}</button>
+        <div>{`}`}</div>
+        <button onClick={mintNFT} disabled={isSold || price === "Loading..."}>{isSold ? "Sold " : `Buy it for: ${price} AVAX`}</button>
       </div>
     </>
   )

@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Base64.sol"; // <-- Ajoute cet import
+import "hardhat/console.sol";
 
 contract Mame42 is ERC721URIStorage, Ownable {
     uint256 public price = 0 ether;
@@ -48,12 +49,4 @@ contract Mame42 is ERC721URIStorage, Ownable {
         _isMinted = true;
         return 1;
     }
-
-    function _baseURI() internal pure override returns (string memory) {
-        return "data:application/json;base64,";
-    }
-
-    // function tokenURI(uint256 tokenId) public view override returns (string memory) {
-    //     return string(abi.encodePacked(_baseURI(), tokenMetadata));
-    // }
 }
