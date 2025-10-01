@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './css/App.css'
 import Navbar from './components/Navbar/Navbar'
 import Card from './components/Card/Card'
 
-import { Web3, MetaMaskProvider, Contract } from 'web3';
+import { Web3, Contract } from 'web3';
+import type { MetaMaskProvider } from 'web3';
 import tokenJson from '../contracts/Token.json';
 import contractAddress from '../contracts/contract-address.json';
 
@@ -27,7 +26,7 @@ const nftCollection = [
 
 declare global {
 	interface Window {
-		ethereum: MetaMaskProvider;
+		ethereum: MetaMaskProvider<Web3>;
 	}
 }
 
@@ -35,9 +34,9 @@ function App() {
   const [web3, setWeb3] = useState<Web3 | null>(null);
   const [accounts, setAccounts] = useState<string[]>([]);
   const [connectedAccount, setConnectedAccount] = useState<string | null>(null);
-  const [contract, setContract] = useState<Contract | null>(null);
+  const [contract, setContract] = useState<Contract<any> | null>(null);
   const [currentChainId, setCurrentChainId] = useState<number | null>(null);
-  const [currentBalance, setCurrentBalance] = useState<number | null>(null);
+  const [currentBalance, setCurrentBalance] = useState<string | null>(null);
 
   const chainId = (import.meta.env.VITE_ENV == "dev") ? 1337 : 43113; // avalanche testnet chain id or hardhat if env is "dev"
   const chainName = (import.meta.env.VITE_ENV == "dev") ? "Hardhat" : "Avalanche Fuji Testnet"
@@ -45,7 +44,8 @@ function App() {
   const nativeCurrency = (import.meta.env.VITE_ENV == "dev") ? { name: "Ethereum", decimals: 18, symbol: "ETH" } : { name: "AVAX", decimals: 18, symbol: "AVAX" }
 
   const setProperNetwork = async () => {
-    if (window.ethereum.networkVersion !== chainId) {
+    const currentChainId = await window.ethereum.request({ method: 'eth_chainId' }) as string;
+    if (parseInt(currentChainId, 16) !== chainId) {
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
@@ -99,7 +99,7 @@ function App() {
 
   const fetchBalanceAndChainID = async () => {
     const resChainId = await web3.eth.getChainId();
-    setCurrentChainId(resChainId);
+    setCurrentChainId(Number(resChainId));
     console.log(connectedAccount)
     const balanceWei = await web3.eth.getBalance(connectedAccount);
     const balanceEth = web3.utils.fromWei(balanceWei, 'ether');
@@ -111,7 +111,7 @@ function App() {
 		// ensure that there is an injected the Ethereum provider
 		if (window.ethereum) {
 			// use the injected Ethereum provider to initialize Web3.js
-			setWeb3(new Web3(window.ethereum));
+			setWeb3(new Web3(window.ethereum as any));
 			// check if Ethereum provider comes from MetaMask
 			if (window.ethereum.isMetaMask) {
 				// setProvider('Connected to Ethereum with MetaMask.');

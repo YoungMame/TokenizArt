@@ -10,4 +10,4 @@ COPY ./mint/image /usr/src/app/public/image
 
 RUN pnpm i
 
-ENTRYPOINT [ "sh", "-c", "cd /usr/src/app && pnpm run preview" ]
+ENTRYPOINT [ "sh", "-c", "cd /usr/src/app && pnpm run build && pnpm run preview" ]

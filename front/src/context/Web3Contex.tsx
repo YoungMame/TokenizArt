@@ -8,8 +8,8 @@ type Web3ContextType = {
   setAccounts: React.Dispatch<React.SetStateAction<string[]>>;
   connectedAccount: string | null;
   setConnectedAccount: React.Dispatch<React.SetStateAction<string | null>>;
-  contract: Contract | null;
-  setContract: React.Dispatch<React.SetStateAction<Contract | null>>;
+  contract: Contract<any> | null;
+  setContract: React.Dispatch<React.SetStateAction<Contract<any> | null>>;
 };
 
 export const Web3Context = createContext<Web3ContextType>({

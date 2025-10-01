@@ -1,4 +1,4 @@
-import { HardhatUserConfig } from "hardhat/config";
+import type { HardhatUserConfig } from "hardhat/types";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-ignition";
 
@@ -51,7 +51,12 @@ const config: HardhatUserConfig = {
       url: process.env.FUJI_URL || "https://api.avax-test.network/ext/bc/C/rpc",
       chainId: Number(process.env.FUJI_CHAIN_ID) || 43113,
       accounts: [process.env.SIGNER_PRIVATE_KEY || ""]
-    },
+    }
+    // xrplevm: {
+    //   url: "rpc.testnet.xrplevm.org",
+    //   chainId: 1449000,
+    //   accounts: [process.env.SIGNER_PRIVATE_KEY || ""]
+    // },
   }
 };
 

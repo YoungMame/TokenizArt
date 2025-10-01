@@ -3,7 +3,7 @@ import "../../css/Navbar/Navbar.css"
 import { useWeb3 } from "../../context/Web3Contex";
 
 function Navbar() {
-  const { web3, setAccounts, setConnectedAccount, provider } = useWeb3();
+  const { web3 } = useWeb3();
   
   return (
     <>
@@ -11,7 +11,6 @@ function Navbar() {
         <h1>My NFT collection</h1>
         <div className={"navbar-buttons"}>
           {web3 ? <Login /> : <p>Please install Metamask etherum on your browser</p>}
-          {provider}
         </div>
       </div>
     </>

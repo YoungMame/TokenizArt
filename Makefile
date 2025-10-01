@@ -27,7 +27,7 @@ compile:
 	docker compose -f $(compose_file_deploy) build
 
 deploy:
-	docker compose -f $(compose_file_deploy) up-d
+	docker compose -f $(compose_file_deploy) up
 
 build_dev:
 	docker compose -f $(compose_file_dev) build --no-cache

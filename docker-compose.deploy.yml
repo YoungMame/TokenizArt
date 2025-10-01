@@ -12,8 +12,8 @@ services:
       FUJI_RPC_URL: ${FUJI_RPC_URL:?}
       ENV: "deploy"
     build:
-        context: ./
-        dockerfile: ./deployment/Dockerfile.deploy
+      context: ./
+      dockerfile: ./deployment/Dockerfile.deploy
     expose:
       - 3000
     ports:

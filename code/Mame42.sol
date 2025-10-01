@@ -30,6 +30,7 @@ contract Mame42 is ERC721URIStorage, Ownable {
         _setPrice(newPrice);
     }
 
+    // Overriding NFT URI prefix with base64 data prefix instead of ipfs base address
     function _baseURI() internal pure virtual override returns (string memory) {
         return "data:application/json;base64,";
     }

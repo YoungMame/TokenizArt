@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+// React imports removed as not needed
 import { useWeb3 } from "../../../context/Web3Contex";
 import "../../../css/Navbar/Login/Login.css"
 
