@@ -15,7 +15,7 @@ export default async function deployFixture() {
     // read the image from image
     const imagePath = path.join(mintFolder, "image");
     const imageString = fs.readFileSync(imagePath, "utf8"); // Add utf8 encoding
-    const prefixedImageString = imageString + 'data:image/png;base64,';
+    const prefixedImageString = "data:image/png;base64," + imageString;
 
     // read the metdata from metadata.json
     const metadataPath = path.join(mintFolder, "metadata.json");

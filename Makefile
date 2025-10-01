@@ -9,7 +9,7 @@ dev: build_dev up_dev
 test: build_test up_test
 
 build_test:
-	docker compose -f $(compose_file_test) build
+	docker compose -f $(compose_file_test) build --no-cache
 
 up_test:
 	docker compose -f $(compose_file_test) up
@@ -18,10 +18,10 @@ compile:
 	docker compose -f $(compose_file_prod) build
 
 deploy:
-	docker compose -f $(compose_file_prod) up
+	docker compose -f $(compose_file_prod) up-d
 
 build_dev:
-	docker compose -f $(compose_file_dev) build
+	docker compose -f $(compose_file_dev) build --no-cache
 
 up_dev:
 	docker compose -f $(compose_file_dev) up

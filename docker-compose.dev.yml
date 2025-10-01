@@ -5,7 +5,6 @@ services:
     container_name: smart-contract-service
     restart: on-failure
     volumes:
-      - ./deployment/test:/usr/src/app/test
       - ./code:/usr/src/app/code
       - ./front/contracts:/usr/src/app/contracts
     environment:

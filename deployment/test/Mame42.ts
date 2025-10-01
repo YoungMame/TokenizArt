@@ -38,4 +38,17 @@ describe("Mame42", function () {
       expect(tokenURI).to.include("data:application/json;base64,");
     });
   });
+
+  it("Bob shouldn't set nft price", async function () {
+    const { Mame42Contract, owner, bob, alice } = await loadFixture(deployFixture);
+    const value = hre.ethers.parseEther("42.0");
+    await expect(Mame42Contract.connect(bob).setPrice(value)).to.be.revertedWithCustomError(Mame42Contract, "OwnableUnauthorizedAccount");
+  });
+
+  it("Owner should set nft price", async function () {
+    const { Mame42Contract, owner, bob, alice } = await loadFixture(deployFixture);
+    const value = hre.ethers.parseEther("42.0");
+    expect(await Mame42Contract.connect(owner).setPrice(value)).to.not.be.reverted;
+    expect(await Mame42Contract.connect(owner).price()).to.be.equal(value);
+  });
 });
