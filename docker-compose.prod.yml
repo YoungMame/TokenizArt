@@ -1,0 +1,29 @@
+name: TokenizArt
+
+services:
+  front-end-service:
+    container_name: front-end-service
+    restart: on-failure
+    depends_on:
+      - smart-contract-service
+    volumes:
+      - ./front/src:/usr/src/app/src
+      - ./front/contracts:/usr/src/app/contracts
+    environment:
+      SIGNER_PRIVATE_KEY: ${SIGNER_PRIVATE_KEY:?}
+      FUJI_CHAIN_ID: ${FUJI_CHAIN_ID:?}
+      FUJI_RPC_URL: ${FUJI_RPC_URL:?}
+      METAMASK_API_KEY: ${METAMASK_API_KEY:?}
+      ENV: "prod"
+      VITE_ENV: "prod"
+    build:
+        context: ./
+        dockerfile: ./front/Dockerfile.prod
+    ports:
+      - "5173:5173"
+    networks:
+      - router
+
+networks:
+  router:
+    driver: bridge

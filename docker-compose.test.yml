@@ -1,4 +1,4 @@
-name: tokenizer
+name: TokenizArt
 
 services:
   smart-contract-service:

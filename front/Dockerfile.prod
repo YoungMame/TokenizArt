@@ -5,10 +5,9 @@ WORKDIR /usr/src/app
 RUN apk update --no-cache && \ 
     apk add pnpm
 
-COPY ./front /usr/src/app/front
+COPY ./front /usr/src/app/
+COPY ./mint/image /usr/src/app/public/image
 
 RUN pnpm i
 
-RUN chmod +x dev.sh
-
-ENTRYPOINT [ "cd /usr/src/app/front && pnpm run prod" ]
+ENTRYPOINT [ "sh", "-c", "cd /usr/src/app && pnpm run preview" ]
