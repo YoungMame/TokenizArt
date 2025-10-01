@@ -4,7 +4,8 @@ export default async function deployFixture() {
     const [owner, bob, alice, jon] = await hre.ethers.getSigners();
     
     const fs = require("fs");
-    const mintFolder = path.join(__dirname, "./mint"); // Go up one level to find mint folder
+    const path = require("path");
+    const mintFolder = path.join(__dirname, "../../mint"); // Go up one level to find mint folder
 
     // read price from price.json
     const pricePath = path.join(mintFolder, "price.json");

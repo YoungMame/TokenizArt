@@ -30,6 +30,10 @@ contract Mame42 is ERC721URIStorage, Ownable {
         _setPrice(newPrice);
     }
 
+    function _baseURI() internal pure virtual override returns (string memory) {
+        return "data:application/json;base64,";
+    }
+
     // Event emited on price change by user
     event PriceSet(address author, uint256 newPrice);
 

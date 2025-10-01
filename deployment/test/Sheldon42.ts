@@ -9,19 +9,6 @@ import filledAccountsFxiture from "./fixtures/filledAccountsFixture";
 export const NAME = "Mame42";
 export const SYMBOL = "MAM";
 
-const fs = require('fs');
-const path = require('path');
-console.log(`__dirname: ${__dirname}`);
-const mintPath = path.join(__dirname, '../mint/');
-const imageName = 'image.jpg';
-const fullImagePath = path.join(mintPath, imageName);
-
-const imageData = fs.readFileSync(fullImagePath);
-const base64Image = imageData.toString('base64');
-const base64Prefix = 'data:image/png;base64,';
-const tokenImageURI = base64Prefix + base64Image;
-console.log(`Token URI: ${tokenImageURI.substring(0, 30)}...`);
-
 describe("Mame42", function () {
   describe("Deployment", function () {
 
@@ -39,13 +26,15 @@ describe("Mame42", function () {
       expect(initialBalance).to.equal(0);
       
       // Bob buys the NFT
-      await Mame42Contract.connect(bob).mintNFT({ value: 0 }); // price is 0 ether
-      
+      const value = hre.ethers.parseEther("0.2");
+      await Mame42Contract.connect(bob).mintNFT({ value: value });
+
       expect(await Mame42Contract.balanceOf(bob.address)).to.equal(1);
       expect(await Mame42Contract.isSold()).to.equal(true);
       
       // Check that the token URI is properly set
       const tokenURI = await Mame42Contract.tokenURI(1);
+      console.log("Token URI:", tokenURI);
       expect(tokenURI).to.include("data:application/json;base64,");
     });
   });
