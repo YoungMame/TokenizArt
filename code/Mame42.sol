@@ -15,15 +15,6 @@ contract Mame42 is ERC721URIStorage, Ownable {
     uint256         priceChangeTimestamp = 0;
     string private _baseTokenURI;
 
-
-    // json correspond to json metadata object
-    // {
-    //     name: string
-    //     description: string
-    //     image: string / ipfs link
-    //     artist: string 
-    // }
-
     constructor(string memory uri, uint256 newPrice) ERC721("Mame42", "MAM") Ownable(msg.sender) {
         _setPrice(newPrice);
         _baseTokenURI = uri;
@@ -63,7 +54,6 @@ contract Mame42 is ERC721URIStorage, Ownable {
         require(_isMinted == false, "NFT already minted");
         require(msg.value >= price, "Insufficient payment");
         _mint(msg.sender, 1);
-        // _setTokenURI(1, "1.json");
         
 
         _isMinted = true;
