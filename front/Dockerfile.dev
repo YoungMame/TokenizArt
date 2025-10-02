@@ -6,7 +6,6 @@ RUN apk update --no-cache && \
     apk add pnpm
 
 COPY ./front /usr/src/app/
-COPY ./mint/image /usr/src/app/public/image
 
 RUN pnpm i
 

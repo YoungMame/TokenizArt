@@ -16,10 +16,6 @@ const address = contractAddress.address;
 
 const nftCollection = [
   {
-    name: "Mame42 #1",
-    description: "The first Mame42 NFT",
-    image: "/image",
-    author: "mduvey",
     price: 0.2
   }
 ]
@@ -154,7 +150,7 @@ function App() {
         <p>Your current Network is <strong>{(currentChainId) ? currentChainId : "..."}</strong></p>
         <div className="nft-collection">
           {nftCollection.map((nft, key) => (
-            <Card price={nft.price} key={key} description={nft.description} name={nft.name} image={nft.image} />
+            <Card price={nft.price} key={key} />
           ))}
         </div>
       </Web3Context.Provider>

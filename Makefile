@@ -11,6 +11,8 @@ test: build_test up_test
 
 prod: build_prod up_prod
 
+deploy: build_deploy up_deploy
+
 build_prod:
 	docker compose -f $(compose_file_prod) build --no-cache
 
@@ -23,10 +25,10 @@ build_test:
 up_test:
 	docker compose -f $(compose_file_test) up
 
-compile:
+build_deploy:
 	docker compose -f $(compose_file_deploy) build
 
-deploy:
+up_deploy:
 	docker compose -f $(compose_file_deploy) up
 
 build_dev:
@@ -58,4 +60,4 @@ re: stop down all
 
 re_dev: stop build_dev up_dev
 
-.PHONY: build up stop down re purge fclean clean debug re_dev build_dev up_dev up_test build_test
+.PHONY: build up stop down re purge fclean clean debug re_dev build_dev up_dev up_test build_test build_prod up_prod build_deploy up_deploy

@@ -6,7 +6,7 @@
     "test": "npx hardhat test",
     "clean": "npx hardhat clean",
     "compile": "npx hardhat compile",
-    "deploy": "npx hardhat run ./deploy.ts --network fuji",
+    "deploy:fuji": "npx hardhat run ./deploy.ts --network fuji",
     "dev": "npx hardhat node",
     "deploy:local": "npx hardhat run ./deploy.ts --network localhost"
   },

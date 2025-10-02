@@ -35,7 +35,7 @@ describe("Mame42", function () {
       // Check that the token URI is properly set
       const tokenURI = await Mame42Contract.tokenURI(1);
       console.log("Token URI:", tokenURI);
-      expect(tokenURI).to.include("data:application/json;base64,");
+      expect(tokenURI).to.include("ipfs://");
     });
   });
 

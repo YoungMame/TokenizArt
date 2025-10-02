@@ -11,20 +11,8 @@ export default async function deployFixture() {
     const pricePath = path.join(mintFolder, "price.json");
     const priceData = fs.readFileSync(pricePath);
     const priceJson = JSON.parse(priceData);
-
-    // read the image from image
-    const imagePath = path.join(mintFolder, "image");
-    const imageString = fs.readFileSync(imagePath, "utf8"); // Add utf8 encoding
-    const prefixedImageString = "data:image/png;base64," + imageString;
-
-    // read the metdata from metadata.json
-    const metadataPath = path.join(mintFolder, "metadata.json");
-    const metadataData = fs.readFileSync(metadataPath, "utf8"); // Add utf8 encoding
-    const metadataObject = JSON.parse(metadataData);
-    metadataObject.image = prefixedImageString;
-    const metadataJson = JSON.stringify(metadataObject); 
     
     const Mame42 = await hre.ethers.getContractFactory("Mame42");
-    const Mame42Contract = await Mame42.deploy(metadataJson, BigInt(priceJson.price));
+    const Mame42Contract = await Mame42.deploy("ipfs://bafybeidcn7ay6mvbzcuejvpmihj2eyxehoz6lpo37dc22h2tr23r4z6cm4/", BigInt(priceJson.price));
     return { Mame42Contract, owner, bob, alice, jon };
 }

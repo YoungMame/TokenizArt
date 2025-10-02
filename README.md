@@ -1,5 +1,7 @@
 # Buy i swear it will grow value next month
 
+This project is a simple NFT minting dApp that allows users to mint a predefined NFT on the Avalanche Fuji C-Chain test network. The project consists of a smart contract written in Solidity and a frontend built with React and Ethers.js.
+
 ## Techs used
 - Solidity: The programming language used to write smart contracts on EVM blockchain.
 - Hardhat: A development environment to compile, deploy, test, and debug Ethereum software.
@@ -8,6 +10,8 @@ I chose Hardhat for its dev features and its compatibility with Ethers.js.
 I chose OpenZeppelin for its standardized and tested implementations of ERC standards which helps to have secure and normalized contracts.
 - Ethers.js: A js library for interacting with the Ethereum blockchain and its ecosystem on web browsers.
 I chose Ethers.js for its ease of use and its compatibility with Metamask wallet.
+- IPFS: A decentralized storage network to store and share data in a distributed file system.
+I used IPFS to store the NFT metadata and image by the Pinata service.
 
 ## Implementation
 
